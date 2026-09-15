@@ -6,8 +6,11 @@
 |---|---|---|---|
 | `muhammedsevimli/sistemler/ajan-filosu` | yok | yok | **Temiz.** Kurulabilir. |
 | `rohitg00/awesome-claude-code-toolkit` | yok | yok | **Dikkatli kur.** Kendisi zararsız, ama tavsiye ettiği kurulumların bir kısmı riskli, bir kısmı da çalışmıyor. |
+| `anthropics/claude-plugins-official` | yok | yok | **Ana kaynak olarak kullan.** Resmi, kürate edilmiş. |
+| `obra/superpowers` | yok | sürüm bilgisi (opt-out) | **Kur.** Telemetrisi açıkça belgelenmiş ve kapatılabilir. |
+| `diet103/claude-code-infrastructure-showcase` | yok | yok | Fikri alındı, tamamı gerekli değil. |
 
-Kısa cevap: **ikisinde de bilgilerini çalan bir kod yok.** Ama ikincisinde, aşağıda tek tek anlatılan, gerçek bir tedarik zinciri riski ve çalışmayan bir güvenlik özelliği var.
+Kısa cevap: **hiçbirinde bilgilerini çalan bir kod yok.** Ama `awesome-claude-code-toolkit`'te, aşağıda tek tek anlatılan, gerçek bir tedarik zinciri riski ve çalışmayan bir güvenlik özelliği var.
 
 ---
 
@@ -146,9 +149,57 @@ Yine de bilerek kur: bu betik **senin yerine izin kararı veriyor.** Ayrıştır
 
 ---
 
+---
+
+## 3 · İkinci tur: daha iyi kaynaklar
+
+`claudefa.st` üzerindeki derleme sayfası bu ortamın ağ politikası tarafından engellendiği için açılamadı. Onun yerine o sayfanın derlediği **birincil kaynağa** gidildi: `hesreallyhim/awesome-claude-code`. Oradan çıkan ve denetlenen üç kaynak:
+
+### 3.1 · `anthropics/claude-plugins-official` · en iyi kaynak
+
+Anthropic'in resmi, kürate edilmiş eklenti dizini. **39 birinci parti eklenti** (code-review, claude-security, feature-dev, code-simplifier, commit-commands, skill-creator, plugin-dev, hookify, session-report, 11 dil için LSP) ve **14 entegrasyon** (github, gitlab, linear, asana, playwright, terraform, firebase, context7, serena...).
+
+Claude Code içinden kuruluyor:
+
+```
+/plugin marketplace add anthropics/claude-plugins-official
+/plugin install code-review@claude-plugins-official
+```
+
+Üçüncü taraf toolkit'lerin elle çözmeye çalıştığı her kategori burada zaten var, üstelik dış katkılar kalite ve güvenlik incelemesinden geçiyor. Deponun kendi uyarısı yine de geçerli: Anthropic üçüncü taraf eklentilerin içeriğini denetlemez, kurmadan önce güvendiğinden emin ol.
+
+### 3.2 · `obra/superpowers` · temiz, önerilir
+
+14 skill'lik bir yazılım geliştirme yöntemi. Denetim:
+
+| Kontrol | Sonuç |
+|---|---|
+| Skill ve hook betiklerinde ağ çağrısı | **Yok** |
+| `hooks.json` şeması | **Doğru** üç katmanlı yapı |
+| Hook yolları | **Mutlak** (`${CLAUDE_PLUGIN_ROOT}`), göreli değil |
+| Telemetri | **Var, açıkça belgelenmiş** (aşağıda) |
+
+Telemetri: `brainstorming` skill'inin *isteğe bağlı* görsel eşlikçisindeki logo kendi sitelerinden yükleniyor ve yalnız Superpowers sürümünü taşıyor. Projen, istemin, tıklamaların gönderilmiyor. Kapatma: `SUPERPOWERS_DISABLE_TELEMETRY=1`. Claude Code'un `DISABLE_TELEMETRY` ve `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` ayarlarına da uyuyor.
+
+Not: hook kurulumunu `awesome-claude-code-toolkit`'in yanlış yaptığı iki şeyi de (şema, mutlak yol) doğru yapıyor. Aradaki kalite farkı buradan da görülüyor.
+
+### 3.3 · `diet103/claude-code-infrastructure-showcase` · fikri değerli, tamamı gereksiz
+
+"Skill'ler kendiliğinden etkinleşmiyor" sorununu bir `UserPromptSubmit` hook'u ve `skill-rules.json` ile çözüyor; istemine bakıp ilgili skill'i zorunlu kılıyor, hatta etkinleşene kadar düzenlemeleri **engelliyor.**
+
+Fikir doğru, uygulaması ağır: tek bir ekibin TypeScript mikroservis projesi için yazılmış, kurulum sihirbazı ve zorlayıcı bloklama içeriyor. Skill seçimi zaten açıklamalar üzerinden çalıştığı için bu kadarına çoğu durumda gerek yok.
+
+Fikrin sadeleştirilmiş, engellemeyen hali `kurulum/hooks/scripts/skill-yonlendirici.js` olarak yazıldı: eşleşen skill'i hatırlatır, karar vermez, istemi hiçbir koşulda bloke etmez.
+
+---
+
 ## Tavsiye
 
+**Ana kaynak: Anthropic'in resmi eklenti dizini.** Rastgele mega-toolkit toplamaya gerek yok.
+
 **ajan-filosu:** kur, çekinme. Geliştirilmiş sürümü bu depoda `ajan-filosu/` altında.
+
+**superpowers:** kur. Temiz, doğru yazılmış, telemetrisi açık ve kapatılabilir.
 
 **awesome-claude-code-toolkit:** `git clone` yapıp içindeki Markdown'ları (agent'lar, komutlar, kurallar, şablonlar) incelemekte hiçbir sakınca yok, değerli içerik var. Ama:
 
@@ -166,9 +217,11 @@ Adım adım kurulum: `kurulum/KURULUM.md`.
 
 Denetim iddiaları şu şekilde doğrulandı, hiçbiri hafızadan yazılmadı:
 
-- Her iki depo sığ klonlandı, dosya envanteri çıkarıldı.
+- Denetlenen depolar sığ klonlandı, dosya envanteri çıkarıldı.
 - `ajan-filosu`: tüm dosyalar baştan sona okundu; ağ, kod çalıştırma, kimlik bilgisi ve görünmez Unicode desenleri için tarandı.
 - `awesome-claude-code-toolkit`: `install.sh`, `hooks.json`, `smart-approve.py` ve diske yazan hook'lar satır satır okundu; 473 Markdown ve 139 JSON ağ/exec desenleri için tarandı.
 - 29 npm paketi registry üzerinden tek tek sorgulandı; var olma durumu HTTP kodundan, deprecated durumu paket meta verisinden alındı.
-- Claude Code hook şeması ve çıktı formatı resmi dokümandan teyit edildi.
+- Claude Code hook şeması, çıktı formatı ve `UserPromptSubmit` bağlam enjeksiyonu resmi dokümandan teyit edildi.
 - `secret-scanner.js`'in çalışmadığı, orijinal betik gerçek girdiyle çalıştırılarak kanıtlandı.
+- İkinci turda `claudefa.st` ağ politikası nedeniyle açılamadı; derlediği birincil kaynak `hesreallyhim/awesome-claude-code` doğrudan klonlanıp okundu.
+- `superpowers` telemetrisi README'den okundu, betikleri ağ çağrısı için ayrıca tarandı (sonuç: skill ve hook betiklerinde çağrı yok).

@@ -7,11 +7,15 @@
     "Sema, resmi dokumantasyondaki uc katmanli yapiya uygundur:",
     "  hooks > OLAY_ADI > [ { matcher, hooks: [ { type, command } ] } ]",
     "",
-    "Yol MUTLAK tutuldu ($HOME kabuk tarafindan genisletilir). Goreli yol",
+    "Yollar MUTLAK tutuldu ($HOME kabuk tarafindan genisletilir). Goreli yol",
     "kullanmak tehlikelidir: hook'lar o anki calisma dizininde kosar, yani",
     "'node hooks/scripts/x.js' yazarsan actigin HER projenin kendi",
     "hooks/scripts/x.js dosyasi calisir. Guvenmedigin bir depoyu acmak",
-    "kod calistirmaya donusur."
+    "kod calistirmaya donusur.",
+    "",
+    "UserPromptSubmit bolumu ISTEGE BAGLI. Skill secimi zaten aciklamalar",
+    "uzerinden calisir; bu yalnizca ek bir hatirlatmadir. Kullanmayacaksan",
+    "o blogu tamamen sil ve skill-kurallari.json'a da ihtiyacin olmaz."
   ],
   "hooks": {
     "PreToolUse": [
@@ -23,6 +27,17 @@
             "command": "node \"$HOME/.claude/hooks/scripts/secret-scanner.js\"",
             "timeout": 10,
             "statusMessage": "Sir taramasi yapiliyor..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/hooks/scripts/skill-yonlendirici.js\"",
+            "timeout": 5
           }
         ]
       }

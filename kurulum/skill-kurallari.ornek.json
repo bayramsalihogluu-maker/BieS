@@ -1,0 +1,16 @@
+{
+  "_aciklama": [
+    "skill-yonlendirici.js icin ornek kural dosyasi.",
+    ".claude/skill-kurallari.json ya da ~/.claude/skill-kurallari.json olarak kaydet.",
+    "_ ile baslayan anahtarlar yok sayilmaz, o yuzden bu blogu kullanirken sil.",
+    "",
+    "Bicim: \"skill-adi\": [\"anahtar kelime\", \"duzenli ifade\"]",
+    "Eslesme buyuk/kucuk harf duyarsizdir."
+  ],
+
+  "test-driven-development": ["\\btest\\b", "tdd", "birim test", "kirmizi.?yesil"],
+  "systematic-debugging": ["\\bhata\\b", "\\bbug\\b", "calismiyor", "patliyor", "stack trace"],
+  "writing-plans": ["\\bplan\\b", "nasil yapalim", "yol haritasi", "tasarla"],
+  "requesting-code-review": ["incele", "review", "gozden gecir", "pr ac"],
+  "security-review": ["guvenlik", "zafiyet", "sizint", "acik var mi", "denetle"]
+}

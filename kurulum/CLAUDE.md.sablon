@@ -1,0 +1,47 @@
+# <Proje adı>
+
+<!--
+  Bu dosya HER istekte, tamamı yüklenir. Sabit maliyettir.
+  Her satır için tek bir soru sor: "Claude bunu bilmezse hata yapar mı?"
+  Cevap hayırsa buraya ait değil, skill'e ait.
+
+  Hedef: 500 token altı (~2.000 karakter).
+  Ölç: node kurulum/scripts/baglam-denetci.mjs
+
+  Buraya AİT OLMAYANLAR:
+    - genel kod yazma öğütleri ("temiz kod yaz", "iyi isimlendir")
+    - uzun stil kılavuzları        → skill yap
+    - araç/kütüphane listeleri     → kod zaten söylüyor
+    - nasıl yapılır anlatımları    → skill yap
+    - açıklamalar, gerekçeler      → bu dosya referans, makale değil
+-->
+
+## Komutlar
+
+<!-- Yalnız tahmin edilemeyecek olanlar. `npm test` standartsa yazma. -->
+
+- Test: `...`
+- Derleme: `...`
+- Lint: `...`
+
+## Mimari
+
+<!-- Yalnız kodu okuyarak anlaşılmayan kararlar. 3-4 satır. -->
+
+- ...
+
+## Kurallar
+
+<!--
+  Yalnız ihlal edildiğinde gerçek zarar veren şeyler.
+  Somut yaz, dilek kipi kullanma.
+  Kötü: "veritabanı değişikliklerinde dikkatli ol"
+  İyi:  "migration dosyalarını elle düzenleme, `npm run migrate:new` ile üret"
+-->
+
+- ...
+
+<!--
+  Bir kuralı Claude sürekli unutuyorsa, sorun kural değil mekanizmadır:
+  pazarlık edilemez bir şeyse hook yap (kesin), bağlama bağlıysa skill yap.
+-->
