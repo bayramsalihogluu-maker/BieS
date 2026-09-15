@@ -13,7 +13,7 @@
 //   - Kurulum sonrasi sir tarayici gercek girdiyle test edilir. Gecmezse
 //     betik hata koduyla biter, "kuruldu" demez.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync, readdirSync } from "node:fs";
 import { join, dirname, basename, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
@@ -27,6 +27,7 @@ const SETTINGS = join(CLAUDE, "settings.json");
 const args = process.argv.slice(2);
 const UYGULA = args.includes("--uygula");
 const YONLENDIRICI = args.includes("--yonlendirici");
+const AJANLAR = args.includes("--ajanlar");
 
 console.log(
   UYGULA
@@ -75,6 +76,44 @@ for (const { ad } of kopyalanacak) {
   if (UYGULA) {
     mkdirSync(SCRIPTS, { recursive: true });
     copyFileSync(kaynak, hedef);
+  }
+}
+
+// --- 1b. ajan tanimlari --------------------------------------------------
+// Ajanlar ~/.claude/agents/ altindaki markdown dosyalaridir. Kendiliginden
+// kesfedilirler; settings.json'a kayit gerekmez.
+
+if (AJANLAR) {
+  console.log("\n## 1b · Ajan tanımları\n");
+  const kaynakDizin = join(HERE, "agents");
+  const hedefDizin = join(CLAUDE, "agents");
+  if (!existsSync(kaynakDizin)) {
+    console.error(`  HATA: ${kaynakDizin} bulunamadı.`);
+    process.exit(2);
+  }
+  const dosyalar = readdirSync(kaynakDizin).filter((f) => f.endsWith(".md"));
+  if (dosyalar.length === 0) {
+    console.error(`  HATA: ${kaynakDizin} altında ajan tanımı yok.`);
+    process.exit(2);
+  }
+  for (const ad of dosyalar) {
+    const hedef = join(hedefDizin, ad);
+    const durum = existsSync(hedef) ? "üzerine yazılacak" : "kurulacak";
+    // frontmatter'daki description'i goster ki ne kurdugunu bilerek onaylayasin
+    const metin = readFileSync(join(kaynakDizin, ad), "utf8");
+    const m = metin.match(/^description:\s*(.+)$/m);
+    const aciklama = m ? m[1].trim() : "(açıklama yok)";
+    console.log(`  ${ad.replace(/\.md$/, "").padEnd(22)} ${durum}`);
+    console.log(`      ${aciklama.slice(0, 110)}${aciklama.length > 110 ? "..." : ""}`);
+    if (UYGULA) {
+      mkdirSync(hedefDizin, { recursive: true });
+      copyFileSync(join(kaynakDizin, ad), hedef);
+    }
+  }
+  if (UYGULA) {
+    console.log(`\n  ${dosyalar.length} ajan kuruldu: ${hedefDizin}`);
+  } else {
+    console.log(`\n  (kuru koşu: kopyalanmadı)`);
   }
 }
 
@@ -215,5 +254,6 @@ if (!UYGULA) {
   console.log("---");
   console.log("Bu bir kuru koşuydu. Uygulamak için:\n");
   console.log(`  node ${yol} --uygula`);
-  console.log(`  node ${yol} --uygula --yonlendirici   (skill yönlendirici de istiyorsan)\n`);
+  console.log(`  node ${yol} --uygula --ajanlar   (ajan filosunu da kur)`);
+  console.log(`  node ${yol} --uygula --ajanlar --yonlendirici   (hepsi)\n`);
 }
