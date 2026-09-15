@@ -14,7 +14,7 @@
 //     betik hata koduyla biter, "kuruldu" demez.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
 import { execFileSync } from "node:child_process";
@@ -86,10 +86,16 @@ for (const { ad } of kopyalanacak) {
 
 console.log("\n## 2 · settings.json\n");
 
+// Exec bicimi kullaniliyor: command = calistirilabilir, args = duz argumanlar.
+// Kabuk devreye girmedigi icin tirnak, bosluk ve degisken genisletme sorunu
+// olmuyor. Yol kurulum aninda MUTLAK olarak cozuluyor; "$HOME" yazmak
+// Windows'ta cmd.exe'ye dusulurse cozulmez, boylece o risk tamamen kalkiyor.
+// settings.json zaten makineye ozel bir dosya, mutlak yol tasimasi normaldir.
 function hookGirdisi(komut, ek = {}) {
   return {
     type: "command",
-    command: `node "$HOME/.claude/hooks/scripts/${komut}"`,
+    command: "node",
+    args: [join(SCRIPTS, komut)],
     ...ek,
   };
 }
@@ -124,9 +130,18 @@ let degisiklik = 0;
 
 for (const [olay, grup] of Object.entries(eklenecek)) {
   ayarlar.hooks[olay] = ayarlar.hooks[olay] || [];
-  const hedefKomut = grup.hooks[0].command;
+  // Idempotentlik betik YOLUNA gore belirlenir, komuta gore degil: exec
+  // biciminde command her zaman "node", ayirt eden sey args[0].
+  // Eski surumun yazdigi kabuk biciminde ("node \"$HOME/...\"") yol
+  // command icinde gecer; ikisini de yakalamak icin her iki alana da bak.
+  const hedefYol = grup.hooks[0].args[0];
+  const betikAdi = basename(hedefYol);
   const zatenVar = ayarlar.hooks[olay].some((g) =>
-    (g.hooks || []).some((h) => h.command === hedefKomut)
+    (g.hooks || []).some(
+      (h) =>
+        (Array.isArray(h.args) && h.args.some((a) => String(a).endsWith(betikAdi))) ||
+        (typeof h.command === "string" && h.command.includes(betikAdi))
+    )
   );
   if (zatenVar) {
     console.log(`  ${olay}: zaten kurulu, atlanıyor.`);

@@ -207,6 +207,34 @@ description: Aylık satış verisinden PDF rapor üretir. Kullanıcı "rapor",
 
 ---
 
+## Ön koşul · git ve Node
+
+Araçların hepsi Node ile çalışıyor, depoyu çekmek için de git gerekiyor. Kurulu olup olmadığını gör:
+
+```bash
+git --version
+node --version     # 18 ya da üstü olmalı
+```
+
+`'git' is not recognized` ya da `command not found` diyorsa kurulu değil (ya da PATH'te yok).
+
+**Windows:**
+
+```powershell
+winget install --id Git.Git -e
+winget install --id OpenJS.NodeJS.LTS -e
+```
+
+**macOS:**
+
+```bash
+brew install git node
+```
+
+Kurulumdan sonra **terminali kapat, yeni bir tane aç.** PATH ancak yeni pencerede güncellenir; en sık takılınan yer burasıdır. `winget` yoksa [git-scm.com](https://git-scm.com/downloads) ve [nodejs.org](https://nodejs.org) üzerinden kurulum dosyasıyla da olur.
+
+---
+
 ## Sıralama
 
 Kendi bilgisayarında, terminalde:

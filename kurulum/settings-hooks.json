@@ -1,21 +1,26 @@
 {
   "_aciklama": [
     "~/.claude/settings.json icine BIRLESTIRILECEK hook ayari.",
-    "Bu dosyayi oldugu gibi kopyalama: settings.json zaten varsa yalniz asagidaki",
-    "'hooks' anahtarini kendi dosyana ekle, _aciklama satirlarini atla.",
     "",
-    "Sema, resmi dokumantasyondaki uc katmanli yapiya uygundur:",
-    "  hooks > OLAY_ADI > [ { matcher, hooks: [ { type, command } ] } ]",
+    "ELLE UGRASMA: 'node kurulum/kur.mjs --uygula' bunu senin yerine yapar,",
+    "yollari makinene gore mutlak olarak cozer, once yedek alir ve iki kez",
+    "calistirsan bile tekrar eklemez. Bu dosya yalniz referans icindir.",
     "",
-    "Yollar MUTLAK tutuldu ($HOME kabuk tarafindan genisletilir). Goreli yol",
-    "kullanmak tehlikelidir: hook'lar o anki calisma dizininde kosar, yani",
-    "'node hooks/scripts/x.js' yazarsan actigin HER projenin kendi",
-    "hooks/scripts/x.js dosyasi calisir. Guvenmedigin bir depoyu acmak",
-    "kod calistirmaya donusur.",
+    "Elle ekleyeceksen: asagidaki 'hooks' anahtarini kendi settings.json'una",
+    "ekle (uzerine yazma, birlestir) ve YOLLARI KENDI MAKINENE GORE DUZELT.",
+    "  macOS/Linux : /Users/ADIN/.claude/hooks/scripts/secret-scanner.js",
+    "  Windows     : C:\\\\Users\\\\ADIN\\\\.claude\\\\hooks\\\\scripts\\\\secret-scanner.js",
+    "",
+    "Neden mutlak yol ve neden 'args': bu exec bicimidir, kabuk devreye",
+    "girmez. Boylece tirnak, bosluk ve $HOME gibi degisken genisletme sorunu",
+    "olmaz. '$HOME' yazmak Windows'ta cmd.exe'ye dusulurse cozulmez.",
+    "Goreli yol ise tehlikelidir: hook'lar o anki calisma dizininde kosar,",
+    "yani 'hooks/scripts/x.js' yazarsan actigin HER projenin kendi dosyasi",
+    "calisir; guvenmedigin bir depoyu acmak kod calistirmaya donusur.",
     "",
     "UserPromptSubmit bolumu ISTEGE BAGLI. Skill secimi zaten aciklamalar",
     "uzerinden calisir; bu yalnizca ek bir hatirlatmadir. Kullanmayacaksan",
-    "o blogu tamamen sil ve skill-kurallari.json'a da ihtiyacin olmaz."
+    "o blogu tamamen sil."
   ],
   "hooks": {
     "PreToolUse": [
@@ -24,7 +29,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$HOME/.claude/hooks/scripts/secret-scanner.js\"",
+            "command": "node",
+            "args": ["/MUTLAK/YOL/.claude/hooks/scripts/secret-scanner.js"],
             "timeout": 10,
             "statusMessage": "Sir taramasi yapiliyor..."
           }
@@ -36,7 +42,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$HOME/.claude/hooks/scripts/skill-yonlendirici.js\"",
+            "command": "node",
+            "args": ["/MUTLAK/YOL/.claude/hooks/scripts/skill-yonlendirici.js"],
             "timeout": 5
           }
         ]
