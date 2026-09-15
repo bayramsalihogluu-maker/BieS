@@ -101,6 +101,31 @@ Eklentisiz kurulumda kaybettiğin tek şey, Superpowers'ın her oturum başında
 
 ---
 
+### Ne kuracağını işine göre seç
+
+Hazır paketlerin çoğu yazılım geliştirme varsayar. Yaptığın iş oysa doğrudan işe yarar; değilse çoğu kuru gürültüdür. Kapsam bedava olsa da seçim listesini kalabalıklaştırmanın bir maliyeti var: alakasız 15 skill arasında doğru olanı seçmek zorlaşır.
+
+Anthropic'in resmi skill deposu iş türünden bağımsız olanları içeriyor:
+
+```bash
+git clone https://github.com/anthropics/skills anthropic-skills
+node kurulum/skill-kur.mjs anthropic-skills --sec xlsx,docx,pdf
+```
+
+`--sec` ile yalnız istediklerini kurarsın, 19'unun hepsini değil.
+
+| İşin | Kur | Kurma |
+|---|---|---|
+| **Yazılım geliştirme** | superpowers (14 skill), `code-review`, `feature-dev`, `security-guidance`, dilin için LSP eklentisi | — |
+| **Rapor, analiz, uyumluluk, finans** | `xlsx`, `docx`, `pdf`, `doc-coauthoring`, `skill-creator` · araştırma için `exa` ya da `firecrawl` eklentisi | LSP eklentileri, `code-review`, `feature-dev`, `pr-review-toolkit` |
+| **Ajan / skill geliştirme** | `skill-creator`, `plugin-dev`, `mcp-server-dev`, `agent-sdk-dev` | — |
+
+Superpowers'ın 14 skill'inden yalnız dördü iş türünden bağımsız: `brainstorming`, `writing-plans`, `dispatching-parallel-agents`, `verification-before-completion`. Kalanı (TDD, hata ayıklama, kod incelemesi, git worktree) yazılıma özgüdür.
+
+Emin değilsen `claude-code-setup` eklentisini kur ve çalıştır: projene bakıp sana özel öneri çıkarır.
+
+---
+
 ## Katman 2 · Superpowers (yöntem katmanı)
 
 `obra/superpowers` · 14 skill, yazılım geliştirmenin tamamını kapsayan bir yöntem: beyin fırtınası → plan yazma → plan uygulama → subagent'larla geliştirme → TDD → kod incelemesi → bitirmeden doğrulama.

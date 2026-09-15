@@ -28,6 +28,23 @@ const UYGULA = args.includes("--uygula");
 const UZERINE = args.includes("--uzerine-yaz");
 const kaynakArg = args.find((a) => !a.startsWith("--"));
 
+// --sec xlsx,docx,pdf  →  yalniz bu skill'leri kur.
+// Bir depoda ise yaramayan 15 skill varsa hepsini kurmanin anlami yok:
+// her biri kucuk de olsa sabit maliyete yazilir ve secim listesini
+// kalabaliklastirir.
+const secArg = args.find((a) => a.startsWith("--sec"));
+let secilenler = null;
+if (secArg) {
+  const deger = secArg.includes("=")
+    ? secArg.split("=")[1]
+    : args[args.indexOf(secArg) + 1];
+  if (!deger || deger.startsWith("--")) {
+    console.error("--sec kullanımı: --sec xlsx,docx,pdf");
+    process.exit(2);
+  }
+  secilenler = new Set(deger.split(",").map((s) => s.trim()).filter(Boolean));
+}
+
 if (!kaynakArg) {
   console.error(
     "Kullanım: node kurulum/skill-kur.mjs <kaynak-dizin> [--uygula] [--uzerine-yaz]\n\n" +
@@ -60,10 +77,15 @@ function frontmatterDescription(text) {
 }
 
 const bulunan = [];
+const elenen = [];
 for (const ad of readdirSync(kok, { withFileTypes: true })) {
   if (!ad.isDirectory()) continue;
   const skillMd = join(kok, ad.name, "SKILL.md");
   if (!existsSync(skillMd)) continue;
+  if (secilenler && !secilenler.has(ad.name)) {
+    elenen.push(ad.name);
+    continue;
+  }
   const metin = readFileSync(skillMd, "utf8");
   bulunan.push({
     ad: ad.name,
@@ -74,11 +96,25 @@ for (const ad of readdirSync(kok, { withFileTypes: true })) {
 }
 
 if (bulunan.length === 0) {
-  console.error(
-    `${kok} altında skill bulunamadı.\n` +
-      `Beklenen yapı: <kaynak>/skills/<ad>/SKILL.md ya da <kaynak>/<ad>/SKILL.md`
-  );
+  if (secilenler) {
+    console.error(
+      `--sec ile istediğin skill'ler bulunamadı: ${[...secilenler].join(", ")}\n` +
+        `${kok} altındaki mevcut skill'ler: ${elenen.join(", ") || "yok"}`
+    );
+  } else {
+    console.error(
+      `${kok} altında skill bulunamadı.\n` +
+        `Beklenen yapı: <kaynak>/skills/<ad>/SKILL.md ya da <kaynak>/<ad>/SKILL.md`
+    );
+  }
   process.exit(2);
+}
+
+if (secilenler) {
+  const eksik = [...secilenler].filter((s) => !bulunan.some((b) => b.ad === s));
+  if (eksik.length > 0) {
+    console.error(`UYARI: şu isimler kaynakta yok: ${eksik.join(", ")}\n`);
+  }
 }
 
 console.log(
@@ -86,7 +122,11 @@ console.log(
 );
 console.log(`Kaynak: ${kok}`);
 console.log(`Hedef : ${HEDEF}\n`);
-console.log(`${bulunan.length} skill bulundu.\n`);
+console.log(`${bulunan.length} skill seçildi.`);
+if (elenen.length > 0) {
+  console.log(`${elenen.length} skill --sec dışında kaldı, kurulmayacak.`);
+}
+console.log("");
 
 const catisan = [];
 for (const s of bulunan) {
