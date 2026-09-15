@@ -105,16 +105,26 @@ Claude Code'un kendi `DISABLE_TELEMETRY` ve `CLAUDE_CODE_DISABLE_NONESSENTIAL_TR
 
 Skill'ler olasılıklıdır, model karar verir. Hook'lar kesindir, kod karar verir. Pazarlık edilemez şeyler buraya.
 
-### 3a · Sır tarayıcı (önerilen)
+### 3a · Sır tarayıcı (önerilen) · betikle
 
 Dosyaya API anahtarı, özel anahtar ya da token yazılmasını yazma anında engeller.
 
+**Varsayılan kuru koşudur: ne yapacağını yazar, hiçbir şeye dokunmaz.**
+
 ```bash
-mkdir -p ~/.claude/hooks/scripts
-cp kurulum/hooks/scripts/secret-scanner.js ~/.claude/hooks/scripts/
+node kurulum/kur.mjs                        # önce göster
+node kurulum/kur.mjs --uygula               # sonra uygula
+node kurulum/kur.mjs --uygula --yonlendirici   # skill yönlendiricisini de kur
 ```
 
-`~/.claude/settings.json` içine `settings-hooks.json` dosyasındaki `hooks` anahtarını ekle. Doğrula:
+Betiğin garantileri:
+
+- `settings.json` **üzerine yazmaz.** Var olan JSON'ı okur, yalnız `hooks` anahtarını birleştirir, önce zaman damgalı yedek alır. Mevcut `model`, `permissions` ve diğer hook'ların yerinde kalır.
+- **Idempotent.** İki kez çalıştırmak aynı hook'u iki kez eklemez.
+- `settings.json` bozuksa **hiçbir şeye dokunmadan** çıkar. Bozuk bir dosyayı ayrıştırıp üzerine yazmak ayarları kaybettirir.
+- Kurulum sonrası sır tarayıcıyı gerçek bir girdiyle test eder. Geçmezse "kuruldu" demez, hata koduyla biter.
+
+Elle yapmak istersen `settings-hooks.json` içindeki `hooks` anahtarını kendi `~/.claude/settings.json` dosyana ekle, sonra doğrula:
 
 ```bash
 echo '{"tool_name":"Write","tool_input":{"file_path":"/tmp/t.js","content":"k=\"AKIAIOSFODNN7EXAMPLQ\""}}' \
@@ -201,13 +211,33 @@ description: Aylık satış verisinden PDF rapor üretir. Kullanıcı "rapor",
 
 Hepsini bir günde kurma. Her katmandan sonra ölç.
 
-1. `CLAUDE.md`'yi ince tut (`CLAUDE.md.sablon`)
-2. Sır tarayıcı hook'unu kur, test et
-3. Resmi dizini ekle, **gerçekten kullanacağın** 3-5 eklentiyi kur
-4. Superpowers'ı kur, bir hafta çalış
-5. `baglam-denetci.mjs` çalıştır, sabit maliyetine bak
+Kendi bilgisayarında, terminalde:
+
+```bash
+git clone https://github.com/bayramsalihogluu-maker/BieS
+cd BieS
+node kurulum/kur.mjs                 # 1. ne yapacağını gör
+node kurulum/kur.mjs --uygula        # 2. hook'u kur, kendini test etsin
+node kurulum/scripts/baglam-denetci.mjs   # 3. mevcut maliyetini ölç
+```
+
+Sonra Claude Code içinde:
+
+```
+/plugin marketplace add anthropics/claude-plugins-official
+/plugin install code-review@claude-plugins-official
+/plugin marketplace add obra/superpowers
+/plugin install superpowers@superpowers
+```
+
+Devamı:
+
+4. `CLAUDE.md`'yi ince tut (`CLAUDE.md.sablon`), sonra tekrar ölç
+5. Superpowers ile bir hafta çalış, neyi kullandığını gör
 6. Eksik kalan varsa skill yaz (`skill-creator` eklentisi bunu yaptırır)
 7. MCP'yi en sona bırak, yalnız ihtiyaç doğunca
+
+Hepsini bir günde kurma. Her adımdan sonra `baglam-denetci.mjs` çalıştır.
 
 ---
 
