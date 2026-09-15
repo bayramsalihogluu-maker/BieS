@@ -14,7 +14,7 @@
 //     betik hata koduyla biter, "kuruldu" demez.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "node:fs";
-import { join, dirname, basename } from "node:path";
+import { join, dirname, basename, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
 import { execFileSync } from "node:child_process";
@@ -27,9 +27,6 @@ const SETTINGS = join(CLAUDE, "settings.json");
 const args = process.argv.slice(2);
 const UYGULA = args.includes("--uygula");
 const YONLENDIRICI = args.includes("--yonlendirici");
-
-const yapilacak = [];
-const not = (s) => yapilacak.push(s);
 
 console.log(
   UYGULA
@@ -75,7 +72,6 @@ for (const { ad } of kopyalanacak) {
   }
   const durum = existsSync(hedef) ? "üzerine yazılacak" : "kopyalanacak";
   console.log(`  ${ad}  →  ${hedef}  (${durum})`);
-  not(`kopyala: ${ad}`);
   if (UYGULA) {
     mkdirSync(SCRIPTS, { recursive: true });
     copyFileSync(kaynak, hedef);
@@ -210,8 +206,14 @@ console.log("  Sonra bağlam maliyetini ölç:\n");
 console.log("    node kurulum/scripts/baglam-denetci.mjs\n");
 
 if (!UYGULA) {
+  // Cagri yolunu oldugu gibi yazdiramayiz: "~" kisaltmasi cmd.exe'de cozulmez
+  // ve kopyalanan komut patlar. Betik bulundugun dizinin altindaysa goreli
+  // yol yaz, degilse mutlak birak; ikisi de her kabukta calisir.
+  const cagri = relative(process.cwd(), process.argv[1]);
+  const yol = !cagri || cagri.startsWith("..") ? process.argv[1] : cagri;
+
   console.log("---");
   console.log("Bu bir kuru koşuydu. Uygulamak için:\n");
-  console.log(`  node ${process.argv[1].replace(homedir(), "~")} --uygula`);
-  console.log(`  node ${process.argv[1].replace(homedir(), "~")} --uygula --yonlendirici   (skill yönlendirici de istiyorsan)\n`);
+  console.log(`  node ${yol} --uygula`);
+  console.log(`  node ${yol} --uygula --yonlendirici   (skill yönlendirici de istiyorsan)\n`);
 }
