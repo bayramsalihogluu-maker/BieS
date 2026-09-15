@@ -31,9 +31,13 @@ function repoRelativePrefix() {
 
 function gitStatus() {
   try {
-    // "-- ." kapsamı çalışılan klasörle sınırlar; disaridaki degisiklikler
-    // (orn. depo kokundeki baska bir proje) izolasyon kontrolune karismaz.
-    return execSync('git status --porcelain=v1 -- .', { encoding: "utf8" });
+    // -uall sart: varsayilan olarak git, tamami yeni olan bir klasoru tek
+    // satira indirir ("?? isler/ornek-is/"). isler/<slug>/ klasorleri kosu
+    // sirasinda yeni yaratildigi icin bu tam da bizim durumumuz; o zaman
+    // icerideki SONUC.md hic gorunmez ve her is icin yanlis "eksik SONUC.md"
+    // uyarisi verilir. "-- ." kapsami calisilan klasorle sinirlar, boylece
+    // -uall buyuk bir deponun tamamini taramaz.
+    return execSync("git status --porcelain=v1 -uall -- .", { encoding: "utf8" });
   } catch (err) {
     console.error("git status çalıştırılamadı, bir git deposu içinde miyiz?");
     console.error(err.message);
