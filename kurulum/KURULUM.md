@@ -209,8 +209,6 @@ description: Aylık satış verisinden PDF rapor üretir. Kullanıcı "rapor",
 
 ## Sıralama
 
-Hepsini bir günde kurma. Her katmandan sonra ölç.
-
 Kendi bilgisayarında, terminalde:
 
 ```bash
