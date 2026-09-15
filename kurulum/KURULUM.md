@@ -232,6 +232,37 @@ description: Aylık satış verisinden PDF rapor üretir. Kullanıcı "rapor",
 
 ---
 
+## Ön koşul 0 · Claude Code yerelde kurulu olmalı
+
+Bu rehberdeki her şey `~/.claude` klasörüne yazar. O klasörü yalnız **yerelde çalışan** Claude Code okur: terminal CLI, masaüstü uygulaması, VS Code/JetBrains eklentisi.
+
+**Tarayıcıdaki `claude.ai/code` bu klasörü görmez.** Web oturumu bulutta bir konteynerde çalışır; senin diskindeki skill'ler, hook'lar ve `settings.json` oraya ulaşmaz. Eklenti sistemi de orada kapalıdır, `/plugin` şu hatayı verir:
+
+```
+Plugins aren't available in this environment
+```
+
+Yani `/plugin` çalışmıyorsa ve kurduğun skill'ler görünmüyorsa, sorun kurulumda değil: yanlış yüzeydesin.
+
+Yerel kurulum (Windows CMD):
+
+```batch
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+PowerShell'de `irm https://claude.ai/install.ps1 | iex`, macOS/Linux'ta `curl -fsSL https://claude.ai/install.sh | bash`. WinGet de var (`winget install Anthropic.ClaudeCode`) ama kendi kendine güncellenmez; yerel kurucu güncellenir.
+
+Kurulumdan sonra terminali yeniden aç ve doğrula:
+
+```bash
+claude --version
+claude doctor
+```
+
+Windows'ta Git for Windows kuruluysa Claude Code Bash aracını kullanabilir; kurulu değilse PowerShell'e düşer.
+
+---
+
 ## Ön koşul · git ve Node
 
 Araçların hepsi Node ile çalışıyor, depoyu çekmek için de git gerekiyor. Kurulu olup olmadığını gör:
