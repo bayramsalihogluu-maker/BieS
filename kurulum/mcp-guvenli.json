@@ -1,0 +1,36 @@
+{
+  "_aciklama": [
+    "Dogrulanmis MCP sunuculari. Bu dosyadaki her paket adi 2026-09-15 tarihinde",
+    "npm registry uzerinden tek tek kontrol edildi: hepsi var ve hicbiri",
+    "deprecated degil. Kurulumdan once kendin de dogrula:",
+    "  npm view <paket-adi> version",
+    "",
+    "Buraya ALINMAYANLAR ve sebepleri kurulum/KURULUM.md icinde.",
+    "Ozetle: var olmayan paket adlarini 'npx -y' ile cagirmak, o adi ileride",
+    "kaydeden birine makinende kod calistirma izni vermek demektir.",
+    "",
+    "Kullanim: ihtiyacin olan sunucuyu bu dosyadan kopyalayip projenin",
+    "kokundeki .mcp.json dosyasina koy, yollari kendi makinene gore duzelt."
+  ],
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/MUTLAK/YOL/PROJE/KLASORUN"
+      ],
+      "_not": "Aktif bakimda. Son argumani gercek proje yolunla degistir. Bu yol disina erisemez, o yuzden dar tut: ev dizinini ($HOME) verme."
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "_not": "Aktif bakimda. Oturumlar arasi kalici bilgi grafigi tutar. Sakladigi her sey diske yazilir, hassas bilgi biriktirmemesine dikkat et."
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "_not": "Aktif bakimda. Disariya baglanmaz, veri gondermez. En dusuk riskli sunucu."
+    }
+  }
+}

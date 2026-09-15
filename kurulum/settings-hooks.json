@@ -1,0 +1,31 @@
+{
+  "_aciklama": [
+    "~/.claude/settings.json icine BIRLESTIRILECEK hook ayari.",
+    "Bu dosyayi oldugu gibi kopyalama: settings.json zaten varsa yalniz asagidaki",
+    "'hooks' anahtarini kendi dosyana ekle, _aciklama satirlarini atla.",
+    "",
+    "Sema, resmi dokumantasyondaki uc katmanli yapiya uygundur:",
+    "  hooks > OLAY_ADI > [ { matcher, hooks: [ { type, command } ] } ]",
+    "",
+    "Yol MUTLAK tutuldu ($HOME kabuk tarafindan genisletilir). Goreli yol",
+    "kullanmak tehlikelidir: hook'lar o anki calisma dizininde kosar, yani",
+    "'node hooks/scripts/x.js' yazarsan actigin HER projenin kendi",
+    "hooks/scripts/x.js dosyasi calisir. Guvenmedigin bir depoyu acmak",
+    "kod calistirmaya donusur."
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/hooks/scripts/secret-scanner.js\"",
+            "timeout": 10,
+            "statusMessage": "Sir taramasi yapiliyor..."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ajan-filosu",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Bağımlılık haritasına göre işleri dalgalara ayırıp paralel koşturan ajan orkestrasyon sistemi, artık plan/izolasyon doğrulama araçlarıyla.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dogrula": "node scripts/dogrula-plan.mjs",
+    "izolasyon": "node scripts/izolasyon-kontrol.mjs",
+    "rapor": "node scripts/rapor-birlestir.mjs",
+    "test": "node --test"
+  }
+}
