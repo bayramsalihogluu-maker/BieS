@@ -76,6 +76,31 @@ Entegrasyonlar (`external_plugins/`): github, gitlab, linear, asana, playwright,
 
 ---
 
+### `/plugin` çalışmıyorsa
+
+Bazı ortamlarda eklenti sistemi kapalı: `Plugins aren't available in this environment`. **Sorun değil, eklentiye ihtiyacın yok.**
+
+Skill'ler eklenti sisteminden bağımsızdır: `~/.claude/skills/<ad>/SKILL.md` yolundaki her skill Claude Code tarafından **kendiliğinden keşfedilir.** Ne pazar yeri, ne kurulum adımı, ne `settings.json` kaydı gerekir.
+
+```bash
+git clone https://github.com/obra/superpowers
+node kurulum/skill-kur.mjs superpowers              # önce göster
+node kurulum/skill-kur.mjs superpowers --uygula     # sonra kur
+```
+
+Betik her skill'in adını ve ne işe yaradığını listeler, zaten kurulu olanlara dokunmaz, kurulum sonrası hepsinin hedefte okunabilir olduğunu doğrular.
+
+Denemeye değer iki alternatif daha (uygulama içi `/plugin` kapalıyken terminalden çalışabiliyor):
+
+```bash
+claude plugin marketplace add anthropics/claude-plugins-official
+claude --plugin-dir ./bir-eklenti-klasoru
+```
+
+Eklentisiz kurulumda kaybettiğin tek şey, Superpowers'ın her oturum başında `using-superpowers` skill'ini zorla bağlama enjekte eden `SessionStart` hook'u. O skill de kurulu olduğu ve açıklaması "Use when starting any conversation" dediği için pratikte yine devreye giriyor, sadece garantili değil zamanlaması.
+
+---
+
 ## Katman 2 · Superpowers (yöntem katmanı)
 
 `obra/superpowers` · 14 skill, yazılım geliştirmenin tamamını kapsayan bir yöntem: beyin fırtınası → plan yazma → plan uygulama → subagent'larla geliştirme → TDD → kod incelemesi → bitirmeden doğrulama.
